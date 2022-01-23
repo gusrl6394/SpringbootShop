@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class ThymeleafExController {
-    @GetMapping(value = "/")
+    //@GetMapping(value = "/")
     public String index(Model model){
         return "/content";
     }
