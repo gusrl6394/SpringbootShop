@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 // extends JpaRepository<엔티티 타입 클래스, 기본기 타입>
-public interface ItemRepository extends JpaRepository<Item, Long>, QuerydslPredicateExecutor<Item> {
+public interface ItemRepository extends JpaRepository<Item, Long>, QuerydslPredicateExecutor<Item>, ItemRepositoryCustom {
     List<Item> findByItemNm(String itemNm);
 
     @Query("select i from Item i where i.itemDetail like %:itemDetail% order by i.price desc")

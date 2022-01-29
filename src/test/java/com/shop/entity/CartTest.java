@@ -1,7 +1,9 @@
-package com.shop.service;
+package com.shop.entity;
 
 import com.shop.dto.MemberFormDto;
-import com.shop.entity.Member;
+import com.shop.repository.CartRepository;
+import com.shop.repository.MemberRepository;
+import com.shop.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,18 +12,27 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.PersistenceContext;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
 @TestPropertySource(locations = "classpath:application-test.properties")
-class MemberServiceTest {
+class CartTest {
+    @Autowired
+    CartRepository cartRepository;
 
     @Autowired
-    MemberService memberService;
+    MemberRepository memberRepository;
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @PersistenceContext
+    EntityManager em;
 
     public Member createMember(){
         MemberFormDto memberFormDto = new MemberFormDto();
@@ -33,29 +44,19 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("회원가입 테스트")
-    public void saveMemberTest() {
+    @DisplayName("장바구니 회원 엔티티 매핑 조회 테스트")
+    public void findCartAndMemberTest(){
         Member member = createMember();
-        Member savedMember = memberService.saveMember(member);
+        memberRepository.save(member);
 
-        assertEquals(member.getEmail(), savedMember.getEmail());
-        assertEquals(member.getName(), savedMember.getName());
-        assertEquals(member.getAddress(), savedMember.getAddress());
-        assertEquals(member.getPassword(), savedMember.getPassword());
-        assertEquals(member.getRole(), savedMember.getRole());
-    }
+        Cart cart = new Cart();
+        cart.setMember(member);
+        cartRepository.save(cart);
 
-    @Test
-    @DisplayName("중복 회원가입 테스트")
-    public void validateDuplicatememberTest(){
-        Member member1 = createMember();
-        Member member2 = createMember();
-        memberService.saveMember(member1);
+        em.flush();
+        em.clear();
 
-        Throwable e = assertThrows(IllegalStateException.class, () -> {
-           memberService.saveMember(member2);
-        });
-
-        assertEquals("이미 가입된 회원입니다.", e.getMessage());
+        Cart savedCart = cartRepository.findById(cart.getId()).orElseThrow(EntityNotFoundException::new);
+        assertEquals(savedCart.getMember().getId(), member.getId());
     }
 }
