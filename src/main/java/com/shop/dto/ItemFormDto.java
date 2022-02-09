@@ -31,8 +31,10 @@ public class ItemFormDto {
 
     private ItemSellStatus itemSellStatus;
 
+    // 상품 저장후 수정할 때 상품 이지미 정보를 저장하는 리스트
     private List<ItemImgDto> itemImgDtoList = new ArrayList<>();
 
+    // 상품 이미지 아이디를 저장하는 리스트(수정시에 이미지 아이디를 담아둘 용도)
     private List<Long> itemImgIds = new ArrayList<>();
 
     private static ModelMapper modelMapper = new ModelMapper();

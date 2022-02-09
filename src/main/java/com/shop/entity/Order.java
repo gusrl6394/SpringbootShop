@@ -33,7 +33,7 @@ public class Order extends BaseEntity{
 
     public void addOrderItem(OrderItem orderItem){
         orderItems.add(orderItem);
-        orderItem.setOrder(this);
+        orderItem.setOrder(this);       // Order 엔티티와 OrderItem 엔티티가 양방향 참조 관게이므로, orderItem 객체에도 Order 객체를 세팅
     }
 
     public static Order createOrder(Member member, List<OrderItem> orderItemList){
